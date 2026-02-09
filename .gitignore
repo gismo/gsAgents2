@@ -1,0 +1,54 @@
+# Compiled outputs
+output/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# Dependencies
+requirements.txt
+poetry.lock
+pipfile.lock
+poetry.lock
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+*.whl
+*.tar.gz
+*.zip
+
+# Local development
+.local/
+*.local
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+temp_ws/
+*.tmp
+*.temp
