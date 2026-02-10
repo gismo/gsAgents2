@@ -591,10 +591,16 @@ Examples:
         "--agent", metavar="NAME", help="Compile specific agent by name"
     )
     parser.add_argument(
+        "--command", metavar="NAME", help="Compile specific command by name"
+    )
+    parser.add_argument(
         "--skill", metavar="NAME", help="Compile specific skill by name"
     )
     parser.add_argument(
         "--agents-only", action="store_true", help="Compile only agents"
+    )
+    parser.add_argument(
+        "--commands-only", action="store_true", help="Compile only commands"
     )
     parser.add_argument(
         "--skills-only", action="store_true", help="Compile only skills"
@@ -619,7 +625,7 @@ Examples:
 
     # Require at least one action
     if not (
-        args.all or args.agent or args.skill or args.agents_only or args.skills_only
+        args.all or args.agent or args.command or args.skill or args.agents_only or args.commands_only or args.skills_only
     ):
         parser.print_help()
         sys.exit(1)
@@ -633,6 +639,14 @@ Examples:
             print(f"Error: Agent not found: {agent_file}")
             sys.exit(1)
         compile_agent(agent_file, providers)
+        return
+
+    if args.command:
+        command_file = COMMANDS_DIR / f"{args.command}.json"
+        if not command_file.exists():
+            print(f"Error: Command not found: {command_file}")
+            sys.exit(1)
+        compile_command(command_file, providers)
         return
 
     # Compile specific skill
