@@ -299,18 +299,38 @@ def write_skill_output(skill_name, content, provider):
     print(f"  Written: {output_file}")
 
     # Copy other files and folders from skill source directory (e.g., examples.md, reference.md, scripts/)
+    add_skill_files(skill_name, provider)
 
-    # (Actual copying of other files is handled by add_skill_files)
-
-    # Add skill directory name to manifest
-    # Write a simple manifest listing skills for this provider (per-skills dir)
+    # Build manifest entries for this provider's skills directory. We include a top-level
+    # entry for the skill name (so consumers can fetch SKILL.md by just the skill name)
+    # and explicit entries for every file under the skill directory so the fetcher can
+    # download auxiliary files.
     manifest_file = skills_root / "manifest.txt"
-    if not manifest_file.exists():
-        manifest_file.write_text(f"{skill_name}\n")
-    else:
-        current_content = manifest_file.read_text().strip()
-        if skill_name not in current_content:
-            manifest_file.write_text(f"{current_content}\n{skill_name}\n")
+    all_entries = set()
+
+    # Add the bare skill name (interpreted by fetcher as skill/SKILL.md)
+    all_entries.add(f"{skill_name}")
+
+    # Walk files under the skill_dir and add relative paths like "skill-name/examples.md"
+    for p in skill_dir.rglob("*"):
+        if p.is_file():
+            rel = p.relative_to(skills_root)
+            # Normalize to posix style
+            all_entries.add(str(rel).replace("\\", "/"))
+
+    # Write manifest (overwrite to keep deterministic ordering)
+    sorted_entries = sorted(list(all_entries))
+    manifest_file.write_text("\n".join(sorted_entries) + "\n")
+
+    # Also write a per-skill manifest inside the skill directory listing files relative to the skill root
+    per_skill_manifest = skill_dir / "manifest.txt"
+    per_skill_lines = []
+    for p in skill_dir.rglob("*"):
+        if p.is_file():
+            rel_to_skill = p.relative_to(skill_dir)
+            per_skill_lines.append(str(rel_to_skill).replace("\\", "/"))
+    per_skill_lines.sort()
+    per_skill_manifest.write_text("\n".join(per_skill_lines) + "\n")
 
 
 def add_skill_files(skill_name, provider):
@@ -625,7 +645,13 @@ Examples:
 
     # Require at least one action
     if not (
-        args.all or args.agent or args.command or args.skill or args.agents_only or args.commands_only or args.skills_only
+        args.all
+        or args.agent
+        or args.command
+        or args.skill
+        or args.agents_only
+        or args.commands_only
+        or args.skills_only
     ):
         parser.print_help()
         sys.exit(1)

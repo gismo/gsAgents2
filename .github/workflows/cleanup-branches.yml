@@ -47,16 +47,16 @@ jobs:
           fi
           remote="https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git"
           for prov in ${providers}; do
-            keep=agents-${prov}
+            keep=output-${prov}
             echo "Processing provider ${prov}, keeping ${keep}"
             # Consider branches that are variants of the keep branch
             git ls-remote --heads ${remote} "refs/heads/${keep}-*" \
-              | awk '{print $2}' | sed 's#refs/heads/##' > /tmp/agents_branches_${prov}.txt || true
-            if [ -s /tmp/agents_branches_${prov}.txt ]; then
+              | awk '{print $2}' | sed 's#refs/heads/##' > /tmp/output_branches_${prov}.txt || true
+            if [ -s /tmp/output_branches_${prov}.txt ]; then
               while read -r b; do
                 echo "Deleting remote branch: $b"
                 git push ${remote} --delete "$b" || echo "Failed to delete $b"
-              done < /tmp/agents_branches_${prov}.txt
+              done < /tmp/output_branches_${prov}.txt
             else
               echo "No candidate branches to delete for ${prov}"
             fi
