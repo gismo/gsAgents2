@@ -244,11 +244,8 @@ def write_agent_output(agent_name, content, provider):
     agents_dir = provider_dir / "agents"
     agents_dir.mkdir(parents=True, exist_ok=True)
 
-    # Determine file extension
-    if provider == "copilot":
-        output_file = agents_dir / f"{agent_name}.agent.md"
-    else:
-        output_file = agents_dir / f"{agent_name}.md"
+    # File extension
+    output_file = agents_dir / f"{agent_name}.md"
 
     output_file.write_text(content)
     print(f"  Written: {output_file}")
@@ -272,6 +269,24 @@ def write_skill_output(skill_name, content, provider):
     output_file = skills_dir / "SKILL.md"
     output_file.write_text(content)
     print(f"  Written: {output_file}")
+
+    # Create filename tracking file
+    filename_file = skills_dir / ".filename"
+    if not filename_file.exists():
+        filename_file.write_text("SKILL.md\n")
+    else:
+        current_content = filename_file.read_text().strip()
+        if "SKILL.md" not in current_content:
+            filename_file.write_text(f"{current_content}\nSKILL.md\n")
+
+    # Create skill manifest entry
+    skills_manifest = provider_dir / "skills" / "manifest.txt"
+    if not skills_manifest.exists():
+        skills_manifest.write_text(f"{skill_name}\n")
+    else:
+        current_content = skills_manifest.read_text().strip()
+        if skill_name not in current_content:
+            skills_manifest.write_text(f"{current_content}\n{skill_name}\n")
 
 
 def compile_agent(agent_file, providers=None):
