@@ -52,3 +52,13 @@ logs/
 temp_ws/
 *.tmp
 *.temp
+cmake_install.cmake
+
+# CMake generated files (should only be in build/)
+fetch_config.cmake
+fetch_wrapper.cmake
+install_agents.cmake
+
+# Agent manifest files (should only be in build/)
+*_manifest.txt
+AGENTS.md
