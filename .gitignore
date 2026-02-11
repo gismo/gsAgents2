@@ -1,13 +1,6 @@
 # Compiled outputs
 output/
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-
 # IDE
 .vscode/
 .idea/
@@ -61,4 +54,3 @@ install_agents.cmake
 
 # Agent manifest files (should only be in build/)
 *_manifest.txt
-AGENTS.md
